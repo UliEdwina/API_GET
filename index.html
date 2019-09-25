@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Quality of Life</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        
+    </head>
+    <body>
+        <center><h1>Quality Of Life</h1></center>
+</br>
+</br>
+<div id= 'display'></div>
+    
+</br>
+
+<script>
+    console.log('works')
+    
+    let httpRequest
+    function makeRequest() {
+    httpRequest = new XMLHttpRequest()
+    
+    console.log('works')
+    httpRequest.open('GET', 'https://developers.teleport.org/api/resources/City/', true)
+
+    httpRequest.send();
+
+    httpRequest.onreadystatechange = 
+
+    function () {
+        let data = httpRequest.responseText
+        let display = document.getElementById('display').innerHTML = data
+            if (this.readyState === 4 && this.status ==200) 
+            
+            if(data){
+            data = console.log(JSON.parse(data))
+                }
+                
+                    
+        }
+    
+    }
+            
+    
+
+makeRequest()
+
+
+</script>
+</body>
+</html>

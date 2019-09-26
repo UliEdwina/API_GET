@@ -8,45 +8,88 @@
         
     </head>
     <body>
-        <center><h1>Quality Of Life</h1></center>
+        <center><h1>Population</h1></center>
 </br>
 </br>
-<div id= 'display'></div>
-    
+<div class= 'display' style= 'position: relative; height:80vh; width:100vw'></div>>
+        <canvas id="myChart"></canvas>
+
+</div>
 </br>
 
 <script>
     console.log('works')
-    
-    let httpRequest
-    function makeRequest() {
-    httpRequest = new XMLHttpRequest()
-    
-    console.log('works')
-    httpRequest.open('GET', 'https://developers.teleport.org/api/resources/City/', true)
+    function BuildChart(unitedStates, timeYear, chartTitle) {
+    var data = {
+        labels: labels,
+        datasets: [{
+            label: chartTitle, // Name the series
+            data: values,
+            backgroundColor: ['rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+                'rgb(54, 162, 235)',
+            ],
+        }],
+    };
 
-    httpRequest.send();
+    const ctx = document.getElementById("myChart").getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: data,
+        options: {
+            responsive: true, // Instruct chart js to respond nicely.
+            maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height 
+            scales: {
+                xAxes: [{
+                        scaleLabel: {
+                        display: true,
+                        labelString: 'Government Population Data'
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Data'
+                    }
+                }]
+            },
+        }
+    });
 
-    httpRequest.onreadystatechange = 
+    return myChart;
+}
 
-    function () {
-        let data = httpRequest.responseText
-        let display = document.getElementById('display').innerHTML = data
-            if (this.readyState === 4 && this.status ==200) 
+
+    let xhttp= new XMLHttpRequest();
+    xhttp.open('GET', `https://datausa.io/api/data?drilldowns=Nation&measures=Population`, true)
+    xhttp.send()
+
+    xhttp.onreadystatechange = 
+    function() {
+        
+        let content = xhttp.responseText
+        let json = JSON.parse(content)
+        console.log(json)
+        if (this.readyState === 4 && this.status == 200) {
+            let unitedStates = content.map(function (e) {
+                console.log('works')
+                    return e.Nation
+                })
+                    let timeYear = content.map(function (e) {
+                        return e.Year
+                })
             
-            if(data){
-            data = console.log(JSON.parse(data))
-                }
-                
-                    
+                    BuildChart(unitedStates, timeYear, "Government Population Data")   
+                }          
         }
     
-    }
-            
-    
-
-makeRequest()
-
 
 </script>
 </body>

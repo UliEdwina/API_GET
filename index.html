@@ -1,96 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Quality of Life</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        
-    </head>
-    <body>
-        <center><h1>Population</h1></center>
-</br>
-</br>
-<div class= 'display' style= 'position: relative; height:80vh; width:100vw'></div>>
-        <canvas id="myChart"></canvas>
 
-</div>
-</br>
+<head>
+    <title>Quality of Life</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
 
-<script>
-    console.log('works')
-    function BuildChart(unitedStates, timeYear, chartTitle) {
-    var data = {
-        labels: labels,
-        datasets: [{
-            label: chartTitle, // Name the series
-            data: values,
-            backgroundColor: ['rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-                'rgb(54, 162, 235)',
-            ],
-        }],
-    };
+</head>
 
-    const ctx = document.getElementById("myChart").getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'horizontalBar',
-        data: data,
-        options: {
-            responsive: true, // Instruct chart js to respond nicely.
-            maintainAspectRatio: false, // Add to prevent default behaviour of full-width/height 
-            scales: {
-                xAxes: [{
-                        scaleLabel: {
-                        display: true,
-                        labelString: 'Government Population Data'
-                    }
+<body>
+    <center>
+        <h1>United States Population From 2013-2017</h1>
+    </center>
+    </br>
+    </br>
+    <div class='chart' style='position: relative; height:200px; width:90px; margin-top: -240px;'></div>
+    <canvas id="myChart"></canvas>
+
+    </div>
+    </br>
+
+    <script>
+        //function that sets chart values and data representation
+        function BuildChart(labels, values, chartTitle) {
+            var data = {
+                labels: labels,
+                datasets: [{
+                    label: chartTitle, 
+                    data: values,
+                    backgroundColor: ['rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                        'rgb(54, 162, 235)',
+                    ],
                 }],
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Data'
-                    }
-                }]
-            },
+            };
+            //Variables that access the HTML ID element as well as establish the axis by which 
+            //the data will be placed. In this case X & Y respectively
+            const ctx = document.getElementById("myChart").getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: data,
+                options: {
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    //Sets Axis vis-a-vis year and population respectively in Object 
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Government Population Data'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    },
+                }
+            });
+
+            return myChart;
         }
-    });
+        //XMLHttp Request to datausa, an open source reporting API for population other government managed facts
 
-    return myChart;
-}
+        let xhttp = new XMLHttpRequest();
+        xhttp.open('GET', `https://datausa.io/api/data?drilldowns=Nation&measures=Population`, true)
+        xhttp.send()
 
+        xhttp.onreadystatechange =
+            function () {
 
-    let xhttp= new XMLHttpRequest();
-    xhttp.open('GET', `https://datausa.io/api/data?drilldowns=Nation&measures=Population`, true)
-    xhttp.send()
+                if (this.readyState === 4 && this.status == 200) {
+                    let response = xhttp.responseText
+                    let json = JSON.parse(response)
+                    console.log(json)
+                    //did long and short maps one on the population and one on the years
+                    const population = json.data.map(({ Population }) => Population)
 
-    xhttp.onreadystatechange = 
-    function() {
-        
-        let content = xhttp.responseText
-        let json = JSON.parse(content)
-        console.log(json)
-        if (this.readyState === 4 && this.status == 200) {
-            let unitedStates = content.map(function (e) {
-                console.log('works')
-                    return e.Nation
-                })
-                    let timeYear = content.map(function (e) {
+                    let years = json.data.map(function (e) {
                         return e.Year
-                })
+                    })
+                    // called Function from the top that builds the chart. 
+                    BuildChart(years, population, "Government Population Data")
+                }
+            }
+            //Source code courtesy of https://css-tricks.com/the-many-ways-of-getting-data-into-charts/
+            //DO NOT forget the <script> source for chart.js if you attempt this at home. You'll be running
+            //around a mountain for hours
             
-                    BuildChart(unitedStates, timeYear, "Government Population Data")   
-                }          
-        }
-    
 
-</script>
+    </script>
 </body>
+
 </html>
